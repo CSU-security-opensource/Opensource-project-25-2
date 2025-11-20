@@ -20,6 +20,14 @@
 | Database           | ![Mysql](https://img.shields.io/badge/MySQL-F29111?style=for-the-badge&logo=mysql&logoColor=white) | 데이터의 무결성을 보장하고 복잡한 관계를 효율적으로 처리하는 RDBMS 사용
 | Version Control      | ![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white) ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)                                                                                                                | 버전 관리를 통해 협업을 원활히 하고 코드 변경 이력을 체계적으로 관리
 | Collaboration           | ![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white)                                                                                                                                                                                                                           |프로젝트 문서화, 일정 관리 및 팀원 간의 원활한 정보 공유를 위해 활용
+# 방문해주세요 👋🏻
+
+이 프로젝트가 마음에 드셨거나 도움이 되셨다면, 아래 링크를 방문하여 **좋아요(❤️)** 를 눌러주세요!! 감사합니다!!! 
+
+👉 **[DACON URL](https://dacon.io/competitions/official/236624/codeshare/13452?page=1&dtype=random)**
+
+---
+
 
 ## Contributors
 <table>
