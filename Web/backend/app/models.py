@@ -93,3 +93,23 @@ class DailyForecast(Base):
     )
 
     plant = relationship("Plant", back_populates="daily_forecasts")
+
+
+# 6. WEATHER_FORECAST (예보 데이터 저장용 - main.py에서 사용)
+class WeatherForecast(Base):
+    __tablename__ = "WEATHER_FORECAST"
+
+    id = Column(Integer, primary_key=True, index=True)
+    plant_id = Column(Integer, ForeignKey("PLANT.id"), index=True)
+    forecast_datetime = Column(DateTime, index=True)
+    temperature = Column(Float, nullable=True)
+    humidity = Column(Float, nullable=True)
+    sky_condition = Column(String(50), nullable=True)
+    precipitation_type = Column(String(50), nullable=True)
+    precipitation_probability = Column(Float, nullable=True)
+    rainfall = Column(Float, nullable=True)
+    wind_speed = Column(Float, nullable=True)
+    wind_direction = Column(Float, nullable=True)
+    created_at = Column(DateTime, nullable=True)
+
+    plant = relationship("Plant")
