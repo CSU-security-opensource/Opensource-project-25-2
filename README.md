@@ -7,7 +7,19 @@
 
 단순한 예측을 넘어, **전력 과잉 공급에 따른 출력 제어(Curtailment)를 사전에 방어**하고, 발전 사업자의 수익(인센티브)을 극대화하는 **B2B 에너지 솔루션**을 지향합니다.
 
-특히, **GIS(지리정보시스템) 기반의 지도 시각화 기술**을 적용하여 제주 전역에 분산된 발전소의 정위치와 운영 현황을 지도 위에서 한눈에 파악하고 직관적으로 모니터링할 수 있도록 구현하였습니다.
+특히, **GIS(지리정보시스템) 기반의 지도 시각화 기술**을 적용하여 제주 전역에 분산된 발전소의 위치와 운영 현황을 지도 위에서 한눈에 파악하고 직관적으로 모니터링할 수 있도록 구현하였습니다.
+
+## 기술 스택
+
+   <div align="center">
+
+| 역할                 | 종류                 | 선정 이유                                                                                                                                                                                                                                                                               
+| -------------------- | ------------- | ------------------- |
+| Library              | ![React](https://img.shields.io/badge/React-61DAFB?style=for-the-badge&logo=React&logoColor=black) |                                                                                                                                                                                                          컴포넌트 기반 개발로 유지보수성과 재사용성을 높이기 위해 선정 
+| Styling              | ![Tailwind CSS](https://img.shields.io/badge/Tailwind%20CSS-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white) |                                                                                                                                                                                         타입 안전성과 모듈화된 스타일링을 제공하여 유지보수성을 강화 
+| Database           | ![Mysql](https://img.shields.io/badge/MySQL-F29111?style=for-the-badge&logo=mysql&logoColor=white) | 데이터의 무결성을 보장하고 복잡한 관계를 효율적으로 처리하는 RDBMS 사용
+| Version Control      | ![Git](https://img.shields.io/badge/git-%23F05033.svg?style=for-the-badge&logo=git&logoColor=white) ![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)                                                                                                                | 버전 관리를 통해 협업을 원활히 하고 코드 변경 이력을 체계적으로 관리
+| Collaboration           | ![Notion](https://img.shields.io/badge/Notion-000000?style=for-the-badge&logo=notion&logoColor=white)                                                                                                                                                                                                                           |프로젝트 문서화, 일정 관리 및 팀원 간의 원활한 정보 공유를 위해 활용
 
 ## Contributors
 <table>
@@ -38,3 +50,10 @@
         </td>
     </tr>
 </table>  
+
+
+
+
+
+
+</div>
