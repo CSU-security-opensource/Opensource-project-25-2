@@ -240,11 +240,19 @@ def get_short_forecast_base_time():
     # 단기예보는 3시간 간격 base_time 사용
     base_hours = [2, 5, 8, 11, 14, 17, 20, 23]
 
-    # 현재 시간보다 작거나 같은 가장 큰 base_time 선택
-    base_hour = max([h for h in base_hours if h <= hour])
-
-    base_dt = now.replace(hour=base_hour, minute=0)
+    valid_hours = [h for h in base_hours if h <= hour]
+    
+    if valid_hours:
+        # 현재 시간 이하의 가장 최근 base_time
+        base_hour = max(valid_hours)
+        base_dt = now.replace(hour=base_hour, minute=0, second=0, microsecond=0)
+    else:
+        # 새벽 0~1시: 전날 23시 사용
+        base_dt = (now - timedelta(days=1)).replace(hour=23, minute=0, second=0, microsecond=0)
+    
     return base_dt.strftime("%Y%m%d"), base_dt.strftime("%H%M")
+
+
 
 
 def get_weather_forecast_3days(lat: float, lon: float):
@@ -264,7 +272,6 @@ def get_weather_forecast_3days(lat: float, lon: float):
         "nx": nx,
         "ny": ny
     }
-    print(base_time)
 
     try:
         res = requests.get(url, params=params, headers=COMMON_HEADERS, timeout=15)
