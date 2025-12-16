@@ -49,7 +49,7 @@ class DailyForecastBase(BaseModel):
 
 
 # --- Read/Response Schemas ---
-# API 응답 시 id 포함
+# API 응답 시 id ss포함
 class Plant(PlantBase):
     id: int
 

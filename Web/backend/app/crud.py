@@ -1,6 +1,7 @@
-from sqlalchemy.orm import Session
+﻿from datetime import datetime, date
 from typing import List, Optional
-from datetime import datetime, date
+
+from sqlalchemy.orm import Session
 
 # SQLAlchemy 모델 임포트
 from .models import Plant, Weather, Generation, Forecast, DailyForecast
@@ -113,7 +114,7 @@ def get_daily_forecasts(
         DailyForecast.date <= end_date,
     )
 
-    if model_version:
+    if model_version is not None:
         query = query.filter(DailyForecast.model_version == model_version)
 
     return query.order_by(DailyForecast.date.asc()).all()
