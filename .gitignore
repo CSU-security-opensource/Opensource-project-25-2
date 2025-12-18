@@ -1,0 +1,7 @@
+Data/
+LSTM.ipynb
+.package-lock.json
+Web/frontend/node_modules
+Web/frontend/package-lock.json
+Web/frontend/package.json
+.env/
