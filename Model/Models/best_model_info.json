@@ -1,0 +1,16 @@
+{
+    "best_model": "NHITS",
+    "performance": {
+        "MAE": 25.638734237002478,
+        "RMSE": 46.44925970884112,
+        "R2": 0.7004306516931964,
+        "MAPE": 201.8292437441199
+    },
+    "features": [
+        "insolation",
+        "temp",
+        "cloud",
+        "humidity"
+    ],
+    "saved_date": "2025-12-18 17:38:47"
+}
