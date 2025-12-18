@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import matplotlib.font_manager as fm
 import time
 import os
+import pickle
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -238,8 +239,64 @@ for model_name in model_names:
     print(f"   R²  : {r2:.4f}")
     print(f"   MAPE: {mape:.2f}%")
 
+results_df = pd.DataFrame(results).sort_values('MAE')
+best_model = results_df.iloc[0]
+
 # ========================================
-# 8. 결과 저장
+# 8. 모델 저장
+# ========================================
+print("\n💾 모델 저장 중...")
+
+if not os.path.exists('../Models'):
+    os.makedirs('../Models')
+
+# [1] NeuralForecast 전체 모델 저장 (.ckpt 파일들)
+nf.save(path='../Models/', model_index=None, overwrite=True)
+print("   ✅ NeuralForecast 모델 저장: ../Models/")
+
+# [2] 메타 정보 저장 (피클)
+model_metadata = {
+    'important_features': important_features,
+    'horizon': horizon,
+    'input_size': input_size,
+    'best_model_name': best_model['Model'],
+    'best_model_performance': {
+        'MAE': best_model['MAE'],
+        'RMSE': best_model['RMSE'],
+        'R2': best_model['R2'],
+        'MAPE': best_model['MAPE(%)']
+    },
+    'ensemble_weights': {
+        'LSTM': 0.4,
+        'GRU': 0.3,
+        'NHITS': 0.3
+    },
+    'scaler_type': 'standard',
+    'training_date': pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')
+}
+
+with open('../checkpoint/model_metadata.pkl', 'wb') as f:
+    pickle.dump(model_metadata, f)
+print("   ✅ 메타데이터 저장: ../checkpoint/model_metadata.pkl")
+
+# [3] 최고 성능 모델 정보를 JSON으로도 저장
+import json
+with open('../Models/best_model_info.json', 'w', encoding='utf-8') as f:
+    json.dump({
+        'best_model': best_model['Model'],
+        'performance': {
+            'MAE': float(best_model['MAE']),
+            'RMSE': float(best_model['RMSE']),
+            'R2': float(best_model['R2']),
+            'MAPE': float(best_model['MAPE(%)'])
+        },
+        'features': important_features,
+        'saved_date': pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')
+    }, f, indent=4, ensure_ascii=False)
+print("   ✅ 최고 성능 모델 정보: ../Models/best_model_info.json")
+
+# ========================================
+# 9. 결과 저장
 # ========================================
 print("\n💾 결과 저장 중...")
 
@@ -251,13 +308,11 @@ cv_df.to_csv('../Results/앙상블_예측_데이터.csv', index=False, encoding=
 print("   ✅ 앙상블_예측_데이터.csv")
 
 # [2] 성능 비교
-results_df = pd.DataFrame(results).sort_values('MAE')
 results_df['Rank'] = range(1, len(results_df) + 1)
 results_df.to_csv('../Results/앙상블_성능_비교.csv', index=False, encoding='utf-8-sig')
 print("   ✅ 앙상블_성능_비교.csv")
 
 # [3] 최종 성능 요약
-best_model = results_df.iloc[0]
 summary_df = pd.DataFrame([{
     'Best_Model': best_model['Model'],
     'MAE': best_model['MAE'],
@@ -274,11 +329,11 @@ summary_df.to_csv('../Results/최종_성능_요약.csv', index=False, encoding='
 print("   ✅ 최종_성능_요약.csv")
 
 # ========================================
-# 9. 시각화
+# 10. 시각화
 # ========================================
 print("\n📊 시각화 생성 중...")
 
-# 9-1. 모델별 성능 비교
+# 10-1. 모델별 성능 비교
 fig, axes = plt.subplots(2, 2, figsize=(16, 12))
 
 # MAE 비교
@@ -353,7 +408,7 @@ plt.tight_layout()
 plt.savefig('../Results/앙상블_성능_비교.png', dpi=300, bbox_inches='tight')
 print("   ✅ 앙상블_성능_비교.png")
 
-# 9-2. 시계열 예측 결과
+# 10-2. 시계열 예측 결과
 fig, axes = plt.subplots(3, 1, figsize=(20, 15))
 
 # 처음 2000개 데이터포인트만 시각화
@@ -403,7 +458,7 @@ plt.savefig('../Results/앙상블_시계열_예측.png', dpi=300, bbox_inches='t
 print("   ✅ 앙상블_시계열_예측.png")
 
 # ========================================
-# 10. 최종 결과 요약
+# 11. 최종 결과 요약
 # ========================================
 print("\n" + "="*70)
 print("🏆 최종 결과 요약")
@@ -421,11 +476,7 @@ print(f"정규화 방법: Early Stopping (patience=5)")
 print(f"앙상블 방법: Mean + Weighted Average")
 print("="*70)
 
-print("\n💡 앙상블의 장점:")
-print("   1. 단일 모델보다 안정적인 예측")
-print("   2. 각 모델의 강점을 결합")
-print("   3. 과적합 위험 감소")
-print("   4. 더 나은 일반화 성능")
-
-print("\n✅ 모든 작업이 완료되었습니다!")
-print("📁 Results 폴더에서 결과를 확인하세요.")
+print("\n📦 저장된 모델 파일:")
+print("   - ../Models/*.ckpt (NeuralForecast 모델)")
+print("   - ../Models/model_metadata.pkl (메타데이터)")
+print("   - ../Models/best_model_info.json (최고 성능 모델 정보)")
