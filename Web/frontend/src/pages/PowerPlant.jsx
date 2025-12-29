@@ -16,8 +16,7 @@ import {
     AlertCircle
 } from "lucide-react";
 
-// ✅ [수정 1] props로 onNavigateToAnalysis 함수를 받습니다.
-const PowerPlant = ({ onNavigateToAnalysis }) => {
+const PowerPlant = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 8; // Increased for grid view
@@ -26,23 +25,23 @@ const PowerPlant = ({ onNavigateToAnalysis }) => {
     const powerPlants = [
         {
             id: 1,
-            name: "제주중앙 태양광발전소",
-            location: "제주특별자치도 서귀포시 성산읍 신풍리 347-1번지",
+            name: "제주동부 태양광 1호기",
+            location: "제주시 구좌읍",
             type: "태양광",
-            capacity: 83.18,
-            utilization: 0.0,
-            dailyGen: 83.18,
+            capacity: 3.5,
+            utilization: 94.2,
+            dailyGen: 68.4,
             status: "정상",
             operator: "제주에너지",
         },
         {
             id: 2,
-            name: "수망 태양광발전시설",
-            location: "서귀포시 남원읍 수망리",
-            type: "태양광",
-            capacity: 83.184,
-            utilization: 0.1,
-            dailyGen: 83.18,
+            name: "제주서부 풍력 1호기",
+            location: "제주시 한림읍",
+            type: "풍력",
+            capacity: 2.8,
+            utilization: 91.8,
+            dailyGen: 52.3,
             status: "정상",
             operator: "제주풍력",
         },
@@ -313,11 +312,7 @@ const PowerPlant = ({ onNavigateToAnalysis }) => {
                             </div>
 
                             <div className="flex gap-2">
-                                <button
-                                    // ✅ [수정 2] 클릭 시 App.js의 함수를 실행하여 plant.id를 전달
-                                    onClick={() => onNavigateToAnalysis(plant.id)}
-                                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors"
-                                >
+                                <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors">
                                     <Eye className="w-4 h-4" />
                                     상세 보기
                                 </button>
@@ -365,6 +360,8 @@ const PowerPlant = ({ onNavigateToAnalysis }) => {
             )}
         </div>
     );
+
+
 };
 
 export default PowerPlant;

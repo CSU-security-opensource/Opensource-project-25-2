@@ -82,7 +82,6 @@ const SolarMonitoringDashboard = ({ onNavigate }) => {
         </div>
         {change && (
           <span
-
             className={`text-sm font-semibold ${change > 0 ? "text-green-500" : "text-red-500"
               }`}
           >
@@ -195,7 +194,6 @@ const SolarMonitoringDashboard = ({ onNavigate }) => {
       </div>
 
       {/* Main Stats */}
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
@@ -329,7 +327,6 @@ const SolarMonitoringDashboard = ({ onNavigate }) => {
       </div>
 
       {/* Daily Trend */}
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
@@ -368,7 +365,6 @@ const SolarMonitoringDashboard = ({ onNavigate }) => {
       </div>
 
       {/* Footer */}
-
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pb-4">
         <div className="flex flex-col md:flex-row items-center justify-between text-sm text-gray-500 gap-4">
           <div className="flex items-center gap-2">

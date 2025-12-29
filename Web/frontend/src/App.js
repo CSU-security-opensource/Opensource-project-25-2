@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import Header from "./components/Header";
 import Home from "./pages/Home";
@@ -9,29 +8,19 @@ import { ThemeProvider } from "./context/ThemeContext";
 
 function App() {
   const [currentView, setCurrentView] = useState("analysis");
-  // [추가] 선택된 발전소 ID 상태 (기본값 1)
-  const [selectedPlantId, setSelectedPlantId] = useState(1);
-
-  // [추가] 발전소 상세 보기로 이동하는 함수
-  const goToAnalysis = (plantId) => {
-    setSelectedPlantId(plantId);
-    setCurrentView("analysis");
-  };
 
   const renderContent = () => {
     switch (currentView) {
       case "home":
         return <Home onNavigate={setCurrentView} />;
       case "powerplant":
-        // [수정] goToAnalysis 함수를 props로 전달
-        return <PowerPlant onNavigateToAnalysis={goToAnalysis} />;
+        return <PowerPlant />;
       case "analysis":
-        // [수정] 선택된 plantId를 props로 전달
-        return <Analysis plantId={selectedPlantId} />;
+        return <Analysis />;
       case "settings":
         return <Settings />;
       default:
-        return <Analysis plantId={selectedPlantId} />;
+        return <Analysis />;
     }
   };
 

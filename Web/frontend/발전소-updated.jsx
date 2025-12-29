@@ -139,6 +139,7 @@ const PowerPlantDashboard = ({ onNavigate }) => {
       operator: "한국남동발전",
     },
   ];
+
   // Utility functions
   const getTypeIcon = (type) => {
     switch (type) {
@@ -410,6 +411,7 @@ const PowerPlantDashboard = ({ onNavigate }) => {
             </button>
           </div>
         )}
+
       </div>
     </div>
   );
