@@ -11,589 +11,405 @@ import {
   Filter,
   ChevronLeft,
   ChevronRight,
+  Menu,
+  X,
+  Eye,
+  Settings,
+  Activity,
+  AlertCircle
 } from "lucide-react";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 const PowerPlantDashboard = ({ onNavigate }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const itemsPerPage = 8; // Increased for grid view
 
-  // 발전소 데이터
+  // 발전소 데이터 (Updated with Daily Generation)
   const powerPlants = [
     {
       id: 1,
-      name: "한림 태양광 발전소",
-      location: "제주시 한림읍",
+      name: "제주동부 태양광 1호기",
+      location: "제주시 구좌읍",
       type: "태양광",
-      capacity: 45.2,
-      utilization: 92.3,
-      status: "운영중",
+      capacity: 3.5,
+      utilization: 94.2,
+      dailyGen: 68.4,
+      status: "정상",
       operator: "제주에너지",
     },
     {
       id: 2,
-      name: "성산 풍력 발전소",
-      location: "서귀포시 성산읍",
+      name: "제주서부 풍력 1호기",
+      location: "제주시 한림읍",
       type: "풍력",
-      capacity: 78.5,
-      utilization: 87.1,
-      status: "운영중",
+      capacity: 2.8,
+      utilization: 91.8,
+      dailyGen: 52.3,
+      status: "정상",
       operator: "제주풍력",
     },
     {
       id: 3,
-      name: "제주 화력 발전소",
-      location: "제주시 애월읍",
-      type: "화력",
-      capacity: 200.0,
-      utilization: 94.7,
-      status: "운영중",
+      name: "서귀포 태양광 2호기",
+      location: "서귀포시 안덕면",
+      type: "태양광",
+      capacity: 4.2,
+      utilization: 96.1,
+      dailyGen: 78.9,
+      status: "정상",
       operator: "한국남동발전",
     },
     {
       id: 4,
-      name: "표선 태양광 발전소",
-      location: "서귀포시 표선면",
-      type: "태양광",
-      capacity: 38.4,
-      utilization: 89.2,
-      status: "운영중",
+      name: "제주남부 풍력 2호기",
+      location: "서귀포시 성산읍",
+      type: "풍력",
+      capacity: 3.1,
+      utilization: 89.5,
+      dailyGen: 45.2,
+      status: "점검중",
       operator: "제주에너지",
     },
     {
       id: 5,
-      name: "월정 풍력 발전소",
-      location: "제주시 구좌읍",
-      type: "풍력",
-      capacity: 42.0,
-      utilization: 85.6,
-      status: "운영중",
-      operator: "제주풍력",
+      name: "한림 태양광 3호기",
+      location: "제주시 한림읍",
+      type: "태양광",
+      capacity: 45.2,
+      utilization: 92.3,
+      dailyGen: 812.5,
+      status: "정상",
+      operator: "제주에너지",
     },
     {
       id: 6,
-      name: "김녕 풍력 발전소",
-      location: "제주시 구좌읍",
+      name: "성산 풍력 3호기",
+      location: "서귀포시 성산읍",
       type: "풍력",
-      capacity: 15.0,
-      utilization: 88.9,
-      status: "운영중",
+      capacity: 78.5,
+      utilization: 87.1,
+      dailyGen: 1205.3,
+      status: "정상",
       operator: "제주풍력",
     },
     {
       id: 7,
-      name: "중문 수력 발전소",
+      name: "중문 태양광 4호기",
       location: "서귀포시 중문동",
-      type: "수력",
+      type: "태양광",
       capacity: 12.5,
       utilization: 76.3,
-      status: "운영중",
+      dailyGen: 210.4,
+      status: "정상",
       operator: "한국수자원공사",
     },
     {
       id: 8,
-      name: "신창 풍력 발전소",
-      location: "제주시 한경면",
+      name: "표선 풍력 4호기",
+      location: "서귀포시 표선면",
       type: "풍력",
       capacity: 99.0,
       utilization: 91.4,
-      status: "운영중",
+      dailyGen: 1850.2,
+      status: "정상",
       operator: "제주풍력",
     },
     {
       id: 9,
-      name: "애월 태양광 발전소",
+      name: "애월 태양광 5호기",
       location: "제주시 애월읍",
       type: "태양광",
       capacity: 25.6,
       utilization: 90.1,
-      status: "운영중",
+      dailyGen: 450.1,
+      status: "정상",
       operator: "제주에너지",
     },
     {
       id: 10,
-      name: "서귀포 화력 발전소",
+      name: "대정 풍력 5호기",
       location: "서귀포시 대정읍",
-      type: "화력",
+      type: "풍력",
       capacity: 150.0,
       utilization: 93.2,
-      status: "운영중",
+      dailyGen: 2890.5,
+      status: "점검중",
       operator: "한국남동발전",
     },
   ];
-
-  // 발전소 유형별 아이콘
+  // Utility functions
   const getTypeIcon = (type) => {
     switch (type) {
-      case "태양광":
-        return <Sun className="w-8 h-8" />;
-      case "풍력":
-        return <Wind className="w-8 h-8" />;
-      case "화력":
-        return <Flame className="w-8 h-8" />;
-      case "수력":
-        return <Droplets className="w-8 h-8" />;
-      default:
-        return null;
+      case "태양광": return <Sun className="w-5 h-5" />;
+      case "풍력": return <Wind className="w-5 h-5" />;
+      case "화력": return <Flame className="w-5 h-5" />;
+      case "수력": return <Droplets className="w-5 h-5" />;
+      default: return null;
     }
+  };
+
+  const getStatusColor = (status) => {
+    return status === "정상"
+      ? "bg-green-50 text-green-600 border-green-100"
+      : "bg-yellow-50 text-yellow-600 border-yellow-100";
   };
 
   const getTypeColor = (type) => {
     switch (type) {
-      case "태양광":
-        return "bg-yellow-50 text-yellow-600";
-      case "풍력":
-        return "bg-blue-50 text-blue-600";
-      case "화력":
-        return "bg-red-50 text-red-600";
-      case "수력":
-        return "bg-cyan-50 text-cyan-600";
-      default:
-        return "bg-gray-50 text-gray-600";
+      case "태양광": return "text-yellow-500 bg-yellow-50";
+      case "풍력": return "text-blue-500 bg-blue-50";
+      default: return "text-gray-500 bg-gray-50";
     }
   };
 
+  // Filtered Data
+  const filteredPlants = powerPlants.filter((plant) =>
+    plant.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredPlants.length / itemsPerPage);
+  const currentPlants = filteredPlants.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+
+  // Stats Calculation
+  const totalCount = powerPlants.length;
+  const solarCount = powerPlants.filter(p => p.type === "태양광").length;
+  const windCount = powerPlants.filter(p => p.type === "풍력").length;
+  const normalCount = powerPlants.filter(p => p.status === "정상").length;
+  const maintenanceCount = powerPlants.filter(p => p.status === "점검중").length;
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-teal-500 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-lg">Logo</span>
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-4">
+              <button onClick={() => onNavigate && onNavigate("dashboard")} className="hidden md:flex items-center text-gray-500 hover:text-gray-900">
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xs">logo</span>
+              </div>
+              <h1 className="text-lg font-bold text-gray-900 hidden sm:block">
+                발전소 현황
+              </h1>
             </div>
-            <h1 className="text-xl font-semibold text-gray-900">
-              에너지 모니터링 시스템
-            </h1>
-          </div>
-          <nav className="flex gap-8">
+
+            {/* Desktop Nav */}
+            <nav className="hidden md:flex gap-8 text-sm font-medium">
+              <button onClick={() => onNavigate && onNavigate("dashboard")} className="text-gray-500 hover:text-gray-900">홈</button>
+              <button className="text-green-600">발전소 현황</button>
+              <button className="text-gray-500 hover:text-gray-900">데이터 분석</button>
+              <button className="text-gray-500 hover:text-gray-900">설정</button>
+            </nav>
+
+            {/* Mobile Menu Button */}
             <button
-              onClick={() => onNavigate && onNavigate("dashboard")}
-              className="text-gray-600 hover:text-gray-900"
+              className="md:hidden p-2 text-gray-600"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              홈
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
-            <button className="text-teal-500 font-semibold">발전소 현황</button>
-            <button className="text-gray-600 hover:text-gray-900">
-              데이터 분석
-            </button>
-            <button className="text-gray-600 hover:text-gray-900">설정</button>
-          </nav>
+          </div>
         </div>
+
+        {/* Mobile Nav */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-white border-t border-gray-100">
+            <div className="px-4 pt-2 pb-4 space-y-1">
+              <button onClick={() => onNavigate && onNavigate("dashboard")} className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">홈</button>
+              <button className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-green-600 bg-green-50">발전소 현황</button>
+              <button className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">데이터 분석</button>
+              <button className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">설정</button>
+            </div>
+          </div>
+        )}
       </header>
 
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Title */}
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">
-            제주도 발전소 현황
-          </h2>
-          <p className="text-gray-600">
-            제주도 지역의 모든 발전소 정보와 설비용량을 확인하세요
-          </p>
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-3 gap-6 mb-8">
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-gray-600 font-medium">전체 발전소</span>
-              <div className="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center">
+      <div className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+        {/* Top Summary Cards */}
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
+          {/* Card 1: Total */}
+          <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex items-start justify-between mb-2">
+              <div className="p-2 bg-blue-50 rounded-lg">
                 <Building2 className="w-5 h-5 text-blue-600" />
               </div>
+              <span className="text-xs font-medium text-gray-400">전체</span>
             </div>
-            <div className="text-3xl font-bold text-gray-900 mb-2">47개소</div>
-            <div className="text-sm text-blue-600">+3개소 전년 대비</div>
+            <div className="text-gray-600 text-sm font-medium mb-1">전체 발전소</div>
+            <div className="text-2xl font-bold text-blue-600">{totalCount}</div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-gray-600 font-medium">총 설비용량</span>
-              <div className="w-10 h-10 bg-green-50 rounded-lg flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-green-600" />
+          {/* Card 2: Solar */}
+          <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex items-start justify-between mb-2">
+              <div className="p-2 bg-yellow-50 rounded-lg">
+                <Sun className="w-5 h-5 text-yellow-600" />
               </div>
+              <span className="text-xs font-medium text-gray-400">태양광</span>
             </div>
-            <div className="text-3xl font-bold text-gray-900 mb-2">
-              1,847 MW
-            </div>
-            <div className="text-sm text-green-600">+147 MW 전년 대비</div>
+            <div className="text-gray-600 text-sm font-medium mb-1">태양광</div>
+            <div className="text-2xl font-bold text-yellow-600">{solarCount}</div>
           </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-gray-600 font-medium">평균 가동률</span>
-              <div className="w-10 h-10 bg-orange-50 rounded-lg flex items-center justify-center">
-                <Clock className="w-5 h-5 text-orange-600" />
+          {/* Card 3: Wind */}
+          <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex items-start justify-between mb-2">
+              <div className="p-2 bg-blue-50 rounded-lg">
+                <Wind className="w-5 h-5 text-blue-500" />
               </div>
+              <span className="text-xs font-medium text-gray-400">풍력</span>
             </div>
-            <div className="text-3xl font-bold text-gray-900 mb-2">87.4%</div>
-            <div className="text-sm text-orange-600">+2.1% 전월 대비</div>
+            <div className="text-gray-600 text-sm font-medium mb-1">풍력</div>
+            <div className="text-2xl font-bold text-blue-600">{windCount}</div>
+          </div>
+
+          {/* Card 4: Normal */}
+          <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+            <div className="flex items-start justify-between mb-2">
+              <div className="p-2 bg-green-50 rounded-lg">
+                <Activity className="w-5 h-5 text-green-600" />
+              </div>
+              <span className="text-xs font-medium text-gray-400">가동중</span>
+            </div>
+            <div className="text-gray-600 text-sm font-medium mb-1">정상 운영</div>
+            <div className="text-2xl font-bold text-green-600">{normalCount}</div>
+          </div>
+
+          {/* Card 5: Maintenance */}
+          <div className="bg-white p-5 rounded-2xl shadow-sm border border-gray-100 col-span-2 md:col-span-1 lg:col-span-1">
+            <div className="flex items-start justify-between mb-2">
+              <div className="p-2 bg-orange-50 rounded-lg">
+                <AlertCircle className="w-5 h-5 text-orange-600" />
+              </div>
+              <span className="text-xs font-medium text-gray-400">보수 필요</span>
+            </div>
+            <div className="text-gray-600 text-sm font-medium mb-1">점검중</div>
+            <div className="text-2xl font-bold text-orange-600">{maintenanceCount}</div>
           </div>
         </div>
 
-        {/* Energy Type Cards */}
-        <div className="grid grid-cols-4 gap-6 mb-8">
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-yellow-50 rounded-full flex items-center justify-center text-yellow-600">
-                <Sun className="w-6 h-6" />
-              </div>
-              <div>
-                <div className="text-sm text-gray-600">태양광</div>
-                <div className="text-xs text-gray-500">Solar Power</div>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">발전소 수</span>
-                <span className="font-semibold">23개소</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">설비용량</span>
-                <span className="font-semibold">487 MW</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">점유율</span>
-                <span className="font-semibold text-yellow-600">26.4%</span>
-              </div>
-            </div>
+        {/* Search & Filter Bar */}
+        <div className="bg-white p-4 rounded-xl shadow-sm border border-gray-200 mb-8 flex flex-col md:flex-row gap-4 justify-between items-center">
+          <div className="relative w-full md:w-96">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            <input
+              type="text"
+              placeholder="발전소명 또는 위치로 검색..."
+              className="w-full pl-10 pr-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:bg-white transition-colors"
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
           </div>
-
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center text-blue-600">
-                <Wind className="w-6 h-6" />
-              </div>
-              <div>
-                <div className="text-sm text-gray-600">풍력</div>
-                <div className="text-xs text-gray-500">Wind Power</div>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">발전소 수</span>
-                <span className="font-semibold">12개소</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">설비용량</span>
-                <span className="font-semibold">634 MW</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">점유율</span>
-                <span className="font-semibold text-blue-600">34.3%</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-red-50 rounded-full flex items-center justify-center text-red-600">
-                <Flame className="w-6 h-6" />
-              </div>
-              <div>
-                <div className="text-sm text-gray-600">화력</div>
-                <div className="text-xs text-gray-500">Thermal Power</div>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">발전소 수</span>
-                <span className="font-semibold">8개소</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">설비용량</span>
-                <span className="font-semibold">592 MW</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">점유율</span>
-                <span className="font-semibold text-red-600">32.1%</span>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="w-12 h-12 bg-cyan-50 rounded-full flex items-center justify-center text-cyan-600">
-                <Droplets className="w-6 h-6" />
-              </div>
-              <div>
-                <div className="text-sm text-gray-600">수력</div>
-                <div className="text-xs text-gray-500">Hydro Power</div>
-              </div>
-            </div>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">발전소 수</span>
-                <span className="font-semibold">4개소</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">설비용량</span>
-                <span className="font-semibold">134 MW</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">점유율</span>
-                <span className="font-semibold text-cyan-600">7.2%</span>
-              </div>
-            </div>
+          <div className="flex gap-3 w-full md:w-auto">
+            <select className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm text-gray-600 focus:outline-none focus:ring-2 focus:ring-green-500 cursor-pointer">
+              <option>전체 유형</option>
+              <option>태양광</option>
+              <option>풍력</option>
+            </select>
+            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm">
+              <Filter className="w-4 h-4" />
+              필터
+            </button>
           </div>
         </div>
 
-        {/* Map and Chart Section */}
-        <div className="grid grid-cols-2 gap-6 mb-8">
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              발전소 위치 현황
-            </h3>
-            <div className="bg-gray-100 rounded-lg h-80 flex items-center justify-center relative">
-              <div className="absolute top-4 left-4 bg-white px-4 py-2 rounded-lg shadow-sm">
-                <div className="text-sm font-semibold">제주도 발전소 분포</div>
-                <div className="text-xs text-gray-600">총 47개소</div>
+        {/* Power Plant Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+          {currentPlants.map((plant) => (
+            <div key={plant.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow p-6 flex flex-col">
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex gap-3">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${getTypeColor(plant.type)}`}>
+                    {getTypeIcon(plant.type)}
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-gray-900 text-sm">{plant.name}</h3>
+                    <div className="text-xs text-gray-500 mt-0.5 flex items-center gap-1">
+                      <span className="w-1 h-1 rounded-full bg-gray-400"></span>
+                      {plant.location}
+                    </div>
+                  </div>
+                </div>
+                <span className={`px-2 py-1 rounded-full text-xs font-bold border ${getStatusColor(plant.status)}`}>
+                  {plant.status}
+                </span>
               </div>
-              <div className="text-gray-400 flex flex-col items-center gap-2">
-                <Building2 className="w-16 h-16" />
-                <span className="text-sm">지도 영역</span>
-              </div>
-              <div className="absolute bottom-4 right-4 flex gap-4 text-xs">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <span>태양광</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                  <span>풍력</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <span>화력</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-cyan-500"></div>
-                  <span>수력</span>
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              에너지원별 점유율
-            </h3>
-            <div className="flex items-center justify-center h-80">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={[
-                      { name: "풍력", value: 34.3, color: "#3b82f6" },
-                      { name: "화력", value: 32.1, color: "#ef4444" },
-                      { name: "태양광", value: 26.4, color: "#eab308" },
-                      { name: "수력", value: 7.2, color: "#06b6d4" },
-                    ]}
-                    cx="50%"
-                    cy="50%"
-                    outerRadius={120}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {[
-                      { name: "풍력", value: 34.3, color: "#3b82f6" },
-                      { name: "화력", value: 32.1, color: "#ef4444" },
-                      { name: "태양광", value: 26.4, color: "#eab308" },
-                      { name: "수력", value: 7.2, color: "#06b6d4" },
-                    ].map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <span className="block text-xs text-gray-500 mb-1">설비 용량</span>
+                  <span className="block text-sm font-bold text-gray-900">{plant.capacity}MW</span>
+                </div>
+                <div className="bg-gray-50 p-3 rounded-lg">
+                  <span className="block text-xs text-gray-500 mb-1">발전 효율</span>
+                  <span className="block text-sm font-bold text-gray-900">{plant.utilization}%</span>
+                </div>
+              </div>
+
+              <div className="mt-auto">
+                <div className="bg-blue-50 p-4 rounded-xl mb-4">
+                  <span className="block text-xs text-blue-600 font-medium mb-1">오늘 발전량</span>
+                  <span className="block text-xl font-bold text-blue-700">{plant.dailyGen}MWh</span>
+                </div>
+
+                <div className="flex gap-2">
+                  <button className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-lg text-sm font-medium flex items-center justify-center gap-2 transition-colors">
+                    <Eye className="w-4 h-4" />
+                    상세 보기
+                  </button>
+                  <button className="px-3 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg transition-colors">
+                    <Settings className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
             </div>
-          </div>
+          ))}
         </div>
 
-        {/* Power Plants Table */}
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-          <div className="flex items-center justify-between p-6 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-900">
-              발전소 상세 목록
-            </h3>
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <Search className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="발전소명 검색"
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                  className="pl-10 pr-4 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-teal-500"
-                />
-              </div>
-              <button className="flex items-center gap-2 px-4 py-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50">
-                <Filter className="w-4 h-4" />
-                필터
-              </button>
+        {/* Pagination */}
+        {totalPages > 0 && (
+          <div className="flex justify-center items-center gap-2 mt-auto">
+            <button
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <div className="flex gap-1">
+              {[...Array(totalPages)].map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={`w-8 h-8 rounded-lg text-sm font-medium ${currentPage === i + 1
+                      ? "bg-blue-600 text-white"
+                      : "text-gray-600 hover:bg-gray-50"
+                    }`}
+                >
+                  {i + 1}
+                </button>
+              ))}
             </div>
+            <button
+              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-50"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
           </div>
-
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">
-                    발전소명
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">
-                    위치
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">
-                    유형
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">
-                    설비용량
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">
-                    가동률
-                  </th>
-                  <th className="text-left py-3 px-4 text-sm font-semibold text-gray-600">
-                    상태
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {powerPlants
-                  .filter((plant) =>
-                    plant.name.toLowerCase().includes(searchTerm.toLowerCase())
-                  )
-                  .slice(
-                    (currentPage - 1) * itemsPerPage,
-                    currentPage * itemsPerPage
-                  )
-                  .map((plant) => (
-                    <tr
-                      key={plant.id}
-                      className="border-b border-gray-100 hover:bg-gray-50"
-                    >
-                      <td className="py-4 px-4">
-                        <div>
-                          <div className="font-medium text-gray-900">
-                            {plant.name}
-                          </div>
-                          <div className="text-xs text-gray-500">
-                            운영사: {plant.operator}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4 text-sm text-gray-600">
-                        {plant.location}
-                      </td>
-                      <td className="py-4 px-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${getTypeColor(
-                            plant.type
-                          )}`}
-                        >
-                          {plant.type}
-                        </span>
-                      </td>
-                      <td className="py-4 px-4 text-sm font-medium text-gray-900">
-                        {plant.capacity} MW
-                      </td>
-                      <td className="py-4 px-4 text-sm font-medium text-gray-900">
-                        {plant.utilization}%
-                      </td>
-                      <td className="py-4 px-4">
-                        <span
-                          className={`px-3 py-1 rounded-full text-xs font-medium ${
-                            plant.status === "운영중"
-                              ? "bg-green-50 text-green-600"
-                              : "bg-yellow-50 text-yellow-600"
-                          }`}
-                        >
-                          {plant.status}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          </div>
-
-          {/* Pagination */}
-          <div className="flex items-center justify-between mt-6 p-6">
-            <div className="text-sm text-gray-600">
-              총{" "}
-              {
-                powerPlants.filter((plant) =>
-                  plant.name.toLowerCase().includes(searchTerm.toLowerCase())
-                ).length
-              }
-              개 중{" "}
-              {Math.min(
-                (currentPage - 1) * itemsPerPage + 1,
-                powerPlants.filter((plant) =>
-                  plant.name.toLowerCase().includes(searchTerm.toLowerCase())
-                ).length
-              )}
-              -
-              {Math.min(
-                currentPage * itemsPerPage,
-                powerPlants.filter((plant) =>
-                  plant.name.toLowerCase().includes(searchTerm.toLowerCase())
-                ).length
-              )}
-              개 표시
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                disabled={currentPage === 1}
-                className="p-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronLeft className="w-4 h-4" />
-              </button>
-              <span className="px-4 py-2 text-sm text-gray-600">
-                {currentPage} /{" "}
-                {Math.ceil(
-                  powerPlants.filter((plant) =>
-                    plant.name.toLowerCase().includes(searchTerm.toLowerCase())
-                  ).length / itemsPerPage
-                )}
-              </span>
-              <button
-                onClick={() =>
-                  setCurrentPage(
-                    Math.min(
-                      Math.ceil(
-                        powerPlants.filter((plant) =>
-                          plant.name
-                            .toLowerCase()
-                            .includes(searchTerm.toLowerCase())
-                        ).length / itemsPerPage
-                      ),
-                      currentPage + 1
-                    )
-                  )
-                }
-                disabled={
-                  currentPage ===
-                  Math.ceil(
-                    powerPlants.filter((plant) =>
-                      plant.name
-                        .toLowerCase()
-                        .includes(searchTerm.toLowerCase())
-                    ).length / itemsPerPage
-                  )
-                }
-                className="p-2 border border-gray-200 rounded-lg text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-          </div>
-        </div>
+        )}
       </div>
     </div>
   );

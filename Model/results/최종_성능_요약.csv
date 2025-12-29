@@ -1,0 +1,2 @@
+﻿Best_Model,MAE,RMSE,R2,MAPE(%),Training_Time(min),Features_Used,Num_Features,Early_Stopping,Ensemble
+NHITS,25.638734237002478,46.44925970884112,0.7004306516931964,201.8292437441199,40.91,"insolation, temp, cloud, humidity",4,Yes (patience=5),Yes

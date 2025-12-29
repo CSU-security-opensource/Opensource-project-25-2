@@ -1,69 +1,64 @@
 import React, { useEffect, useState } from "react";
 import { Map, MapMarker, useKakaoLoader } from "react-kakao-maps-sdk";
 
-function KakaoMap() { 
+const API = "http://localhost:8000";
+
+// ✅ [수정] plantId를 props로 받습니다. (기본값 1)
+function KakaoMap({ plantId = 1 }) {
   const [loading, error] = useKakaoLoader({
-    appkey: "556feed4e7ed48f090f6765df97c4107",
-    libraries: ["services"],
+    appkey: "556feed4e7ed48f090f6765df97c4107", // 본인의 카카오 앱 키
   });
 
-  const [position, setPosition] = useState(null);
+  const [plant, setPlant] = useState(null);
 
+  // 발전소 정보 API 호출 (plantId가 바뀔 때마다 실행)
   useEffect(() => {
-    if (loading) return;
+    if (!plantId) return;
 
-    if (!window.kakao || !window.kakao.maps) {
-      console.error("카카오 SDK 로드 실패");
-      return;
-    }
-
-    const geocoder = new window.kakao.maps.services.Geocoder();
-    const address = "경기도 김포시 월곶면";
-
-    geocoder.addressSearch(address, (result, status) => {
-      if (status === window.kakao.maps.services.Status.OK) {
-        const lat = parseFloat(result[0].y);
-        const lng = parseFloat(result[0].x);
-        setPosition({ lat, lng });
-      } else {
-        console.error("주소 변환 실패:", status);
-      }
-    });
-  }, [loading]);
+    fetch(`${API}/plants/${plantId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        // 위도/경도 데이터가 있는지 확인
+        if (data.latitude && data.longitude) {
+          setPlant({
+            name: data.name,
+            // ✅ [안전장치] DB에서 문자열로 넘어올 경우를 대비해 숫자로 변환
+            lat: parseFloat(data.latitude),
+            lng: parseFloat(data.longitude),
+          });
+        } else {
+          console.warn(`발전소(ID:${plantId})의 위치 정보가 없습니다.`);
+        }
+      })
+      .catch((err) => console.error("발전소 정보 로드 실패:", err));
+  }, [plantId]); // 의존성 배열에 plantId 추가
 
   if (loading) {
-    return (
-      <div className="w-full h-full flex items-center justify-center">
-        지도를 불러오는 중...
-      </div>
-    );
+    return <div className="flex items-center justify-center h-full text-gray-500">지도 로딩 중...</div>;
   }
 
   if (error) {
-    return <div className="text-red-500">지도 로딩 실패</div>;
+    return <div className="flex items-center justify-center h-full text-red-500">지도 로드 실패</div>;
   }
 
-  if (!position) {
-    return (
-      <div className="w-full h-full flex items-center justify-center">
-        위치를 찾는 중...
-      </div>
-    );
+  if (!plant) {
+    return <div className="flex items-center justify-center h-full text-gray-500">위치 정보를 불러오는 중...</div>;
   }
 
   return (
     <Map
-      center={position}
+      center={{ lat: plant.lat, lng: plant.lng }}
       level={4}
       style={{ width: "100%", height: "100%", borderRadius: "12px" }}
     >
-      <MapMarker position={position}>
-        <div style={{ padding: "5px", fontSize: "13px" }}>
-          경기 김포 태양광 발전소
+      <MapMarker position={{ lat: plant.lat, lng: plant.lng }}>
+        <div style={{ padding: "6px", color: "#000", fontSize: "13px", fontWeight: "bold" }}>
+          {plant.name}
         </div>
       </MapMarker>
     </Map>
   );
 }
+
 
 export default KakaoMap;

@@ -9,6 +9,7 @@ import matplotlib.font_manager as fm
 import time
 import os
 import pickle
+import shutil
 import warnings
 warnings.filterwarnings('ignore')
 
@@ -35,10 +36,6 @@ print("="*70)
 # 1. 데이터 로드
 # ========================================
 print("\n📂 데이터 로드 중...")
-train_df = pd.read_csv("../../Data/train_data_fixed.csv")
-val_df = pd.read_csv("../../Data/validation_data_fixed.csv")
-test_df = pd.read_csv("../../Data/test_data_fixed_filtered.csv")
-
 for df in [train_df, val_df, test_df]:
     df['timestamp'] = pd.to_datetime(df['timestamp'])
 
@@ -107,7 +104,6 @@ horizon = 24 * 30
 input_size = 24 * 30
 
 models = [
-    # Model 1: LSTM (기본 설정)
     LSTM(
         h=horizon,
         input_size=input_size,
@@ -126,7 +122,6 @@ models = [
         alias='LSTM'
     ),
     
-    # Model 2: GRU (기본 설정)
     GRU(
         h=horizon,
         input_size=input_size,
@@ -145,7 +140,6 @@ models = [
         alias='GRU'
     ),
     
-    # Model 3: NHITS (다른 구조)
     NHITS(
         h=horizon,
         input_size=input_size,
@@ -249,7 +243,6 @@ print("\n💾 모델 저장 중...")
 
 if not os.path.exists('../Models'):
     os.makedirs('../Models')
-
 # [1] NeuralForecast 전체 모델 저장 (.ckpt 파일들)
 nf.save(path='../Models/', model_index=None, overwrite=True)
 print("   ✅ NeuralForecast 모델 저장: ../Models/")
@@ -478,5 +471,4 @@ print("="*70)
 
 print("\n📦 저장된 모델 파일:")
 print("   - ../Models/*.ckpt (NeuralForecast 모델)")
-print("   - ../Models/model_metadata.pkl (메타데이터)")
 print("   - ../Models/best_model_info.json (최고 성능 모델 정보)")

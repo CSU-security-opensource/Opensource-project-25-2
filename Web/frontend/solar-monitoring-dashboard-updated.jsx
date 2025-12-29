@@ -9,6 +9,9 @@ import {
   MapPin,
   Battery,
   AlertCircle,
+  Menu,
+  X,
+  ChevronLeft
 } from "lucide-react";
 import {
   LineChart,
@@ -27,6 +30,7 @@ import {
 const SolarMonitoringDashboard = ({ onNavigate }) => {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [activeTab, setActiveTab] = useState("today");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     const timer = setInterval(() => setCurrentTime(new Date()), 1000);
@@ -78,9 +82,9 @@ const SolarMonitoringDashboard = ({ onNavigate }) => {
         </div>
         {change && (
           <span
-            className={`text-sm font-semibold ${
-              change > 0 ? "text-green-500" : "text-red-500"
-            }`}
+
+            className={`text-sm font-semibold ${change > 0 ? "text-green-500" : "text-red-500"
+              }`}
           >
             {change > 0 ? "+" : ""}
             {change}%
@@ -96,44 +100,67 @@ const SolarMonitoringDashboard = ({ onNavigate }) => {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 pb-8">
       {/* Header */}
-      <div className="max-w-7xl mx-auto mb-8">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-lg">logo</span>
+      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50 mb-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex items-center gap-4">
+              <div className="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-xs">logo</span>
+              </div>
+              <h1 className="text-lg font-bold text-gray-900 hidden sm:block">
+                에너지 모니터링 시스템
+              </h1>
             </div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              에너지 모니터링 시스템
-            </h1>
-          </div>
-          <div className="flex items-center gap-6 text-sm text-gray-600">
+
+            {/* Desktop Nav */}
+            <nav className="hidden md:flex gap-8 text-sm font-medium">
+              <button className="text-green-600">홈</button>
+              <button
+                onClick={() => onNavigate && onNavigate("powerplant")}
+                className="text-gray-500 hover:text-gray-900"
+              >
+                발전소 현황
+              </button>
+              <button className="text-gray-500 hover:text-gray-900">데이터 분석</button>
+              <button className="text-gray-500 hover:text-gray-900">설정</button>
+            </nav>
+
+            {/* Mobile Menu Button */}
             <button
-              onClick={() => onNavigate && onNavigate("dashboard")}
-              className="hover:text-green-600 transition-colors"
+              className="md:hidden p-2 text-gray-600"
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
-              홈
-            </button>
-            <button
-              onClick={() => onNavigate && onNavigate("powerplant")}
-              className="hover:text-green-600 transition-colors"
-            >
-              발전소 현황
-            </button>
-            <button className="hover:text-green-600 transition-colors">
-              데이터 분석
-            </button>
-            <button className="hover:text-green-600 transition-colors">
-              설정
+              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
             </button>
           </div>
         </div>
-      </div>
+
+        {/* Mobile Nav */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden bg-white border-t border-gray-100">
+            <div className="px-4 pt-2 pb-4 space-y-1">
+              <button className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-green-600 bg-green-50">홈</button>
+              <button
+                onClick={() => {
+                  setIsMobileMenuOpen(false);
+                  onNavigate && onNavigate("powerplant");
+                }}
+                className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50"
+              >
+                발전소 현황
+              </button>
+              <button className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">데이터 분석</button>
+              <button className="block w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:bg-gray-50">설정</button>
+            </div>
+          </div>
+        )}
+      </header>
 
       {/* Hero Section */}
-      <div className="max-w-7xl mx-auto mb-8">
-        <div className="bg-gradient-to-r from-blue-600 to-blue-400 rounded-3xl p-8 relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
+        <div className="bg-gradient-to-r from-blue-600 to-blue-400 rounded-3xl p-8 relative overflow-hidden shadow-lg">
           <div className="absolute right-0 top-0 w-96 h-96 opacity-10">
             <img
               src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='white' d='M12,18L20.39,21.39C22.97,18.59 22.12,14.28 18.75,12.6C18.76,12.4 18.76,12.2 18.75,12C21.33,10.32 22.17,6.5 19.59,3.69L12,7L4.41,3.69C1.83,6.5 2.67,10.32 5.25,12C5.24,12.2 5.24,12.4 5.25,12.6C1.88,14.28 1.03,18.59 3.61,21.39L12,18Z'/%3E%3C/svg%3E"
@@ -142,24 +169,24 @@ const SolarMonitoringDashboard = ({ onNavigate }) => {
             />
           </div>
           <div className="relative z-10">
-            <h2 className="text-4xl font-bold text-white mb-4">
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
               실시간 태양광 발전 모니터링
             </h2>
-            <p className="text-blue-100 text-lg mb-8">
+            <p className="text-blue-100 text-base md:text-lg mb-8 max-w-2xl">
               청정 에너지 생산 현황을 실시간으로 확인하고 발전 효율을
               최적화하세요
             </p>
-            <div className="flex gap-16">
+            <div className="flex flex-col sm:flex-row gap-8 sm:gap-16">
               <div>
                 <p className="text-blue-100 mb-1">현재 발전량</p>
-                <p className="text-5xl font-bold text-white">
-                  2,847 <span className="text-2xl">kW</span>
+                <p className="text-4xl md:text-5xl font-bold text-white">
+                  2,847 <span className="text-xl md:text-2xl">kW</span>
                 </p>
               </div>
               <div>
                 <p className="text-blue-100 mb-1">발전 효율</p>
-                <p className="text-5xl font-bold text-white">
-                  94.2<span className="text-2xl">%</span>
+                <p className="text-4xl md:text-5xl font-bold text-white">
+                  94.2<span className="text-xl md:text-2xl">%</span>
                 </p>
               </div>
             </div>
@@ -168,7 +195,8 @@ const SolarMonitoringDashboard = ({ onNavigate }) => {
       </div>
 
       {/* Main Stats */}
-      <div className="max-w-7xl mx-auto mb-8">
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           <StatCard
             title="현재 발전량"
@@ -230,7 +258,7 @@ const SolarMonitoringDashboard = ({ onNavigate }) => {
       </div>
 
       {/* Charts Section */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
         {/* 시간별 발전량 */}
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
@@ -301,7 +329,8 @@ const SolarMonitoringDashboard = ({ onNavigate }) => {
       </div>
 
       {/* Daily Trend */}
-      <div className="max-w-7xl mx-auto">
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-2xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-bold text-gray-900">
@@ -339,8 +368,9 @@ const SolarMonitoringDashboard = ({ onNavigate }) => {
       </div>
 
       {/* Footer */}
-      <div className="max-w-7xl mx-auto mt-8 pb-4">
-        <div className="flex items-center justify-between text-sm text-gray-500">
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-8 pb-4">
+        <div className="flex flex-col md:flex-row items-center justify-between text-sm text-gray-500 gap-4">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
             <span>시스템 정상</span>
